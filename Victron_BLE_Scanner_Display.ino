@@ -38,6 +38,7 @@
 #endif
 
 
+bool usingGraphicsHardware=false;
 
 #if defined M5STICKC || defined M5STICKCPLUS
   M5Display display;
@@ -57,6 +58,8 @@
   // #define LED_PIN 10
   // #define LED_ON LOW     // weirdly enough, the on/off states for the M5Stick boards are the opposite
   // #define LED_OFF HIGH   // of every other board I've used.
+
+  usingGraphicsHardware=true;
 #endif
 
 // The Espressif people decided to use String instead of std::string in some versions of

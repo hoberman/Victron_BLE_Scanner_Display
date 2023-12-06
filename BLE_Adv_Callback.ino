@@ -122,22 +122,26 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
           return;
         }
 
-        // Get the beacon's RSSI (signal strength). If it's stronger than other beacons we've received,
-        // then lock on to this SmartSolar and don't display beacons from others anymore.
-        int RSSI=advertisedDevice.getRSSI();
-        if (selectedSolarControllerIndex==solarControllerIndex) {
-          if (RSSI > bestRSSI) {
-            bestRSSI=RSSI;
-          }
-        } else {
-          if (RSSI > bestRSSI) {
-            selectedSolarControllerIndex=solarControllerIndex;
-            Serial.printf("Selected Victon SmartSolar %s at MAC %s as preferred device based on RSSI %d\n",
-              solarControllers[solarControllerIndex].cachedDeviceName,receivedMacStr,RSSI);
+        // If we're showing our data on our integrated graphics hardware,
+        // then show only the SmartSolar device with the strongest signal.
+        if (usingGraphicsHardware) {
+          // Get the beacon's RSSI (signal strength). If it's stronger than other beacons we've received,
+          // then lock on to this SmartSolar and don't display beacons from others anymore.
+          int RSSI=advertisedDevice.getRSSI();
+          if (selectedSolarControllerIndex==solarControllerIndex) {
+            if (RSSI > bestRSSI) {
+              bestRSSI=RSSI;
+            }
           } else {
-            Serial.printf("Discarding RSSI-based non-selected Victon SmartSolar %s at MAC %s\n",
-              solarControllers[solarControllerIndex].cachedDeviceName,receivedMacStr);
-            return;
+            if (RSSI > bestRSSI) {
+              selectedSolarControllerIndex=solarControllerIndex;
+              Serial.printf("Selected Victon SmartSolar %s at MAC %s as preferred device based on RSSI %d\n",
+                solarControllers[solarControllerIndex].cachedDeviceName,receivedMacStr,RSSI);
+            } else {
+              Serial.printf("Discarding RSSI-based non-selected Victon SmartSolar %s at MAC %s\n",
+                solarControllers[solarControllerIndex].cachedDeviceName,receivedMacStr);
+              return;
+            }
           }
         }
 
