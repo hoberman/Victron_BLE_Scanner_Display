@@ -1,5 +1,7 @@
-// A decryption key from the Victron app will be a string of hex digits like this:
+// Decryption keys and MAC addresses obtained from the VictronConnect app will be
+// a string of hex digits like this:
 //
+//   f4116784732a
 //   dc73cb155351cf950f9f3a958b5cd96f
 //
 // Split that up and turn it into an array whose equivalent definition would be like this:

@@ -10,21 +10,23 @@
 //
 
 // Tested with the following boards:
-//    M5StickC              ESP32-PICO with integrated display
-//    M5StackCPlus          ESP32-PICO with integrated display
-//    M5StampS3             ESP32, no display
+//    M5StickC              ESP32-PICO with integrated  80x160 ST7735S TFT display
+//    M5StickCPlus          ESP32-PICO with integrated 135x240 ST7789v2 TFT display
+// You can likely get this to work with other boards that use similar display hardware
+// and/or display calls. I used to like TTGO boards - some of them have similar display hardware
+// with the same display resolution as the M5StickCPlus, but they changed their
+// USB-to-Serial chip to one that won't work with my Macbook. 
 
 #include <BLEDevice.h>
 #include <BLEScan.h>
 #include <BLEAdvertisedDevice.h>
 
-#include <aes/esp_aes.h>
+#include <aes/esp_aes.h>  // AES decryption
 
 // Uncomment only one.
 ///////////////////////////////////
-//#define M5STICKC
+#define M5STICKC
 //#define M5STICKCPLUS
-//#defined M5STAMPS3
 ///////////////////////////////////
 
 #if defined M5STICKC
@@ -35,9 +37,7 @@
   #include <M5StickCPlus.h>
 #endif
 
-#if defined M5STAMPS3
-  // nothing special here
-#endif
+
 
 #if defined M5STICKC || defined M5STICKCPLUS
   M5Display display;
@@ -53,11 +53,11 @@
   #define COLOR_FLOAT                   TFT_DARKGREEN
   #define COLOR_EQUALIZATION            (0x15 << 11) + (0x15 << 5) + 0x00   // dim orange
 
+  // The M5Stick modules have an LED but I don't use it since we have that nice TFT display.
   // #define LED_PIN 10
-  // #define LED_ON LOW
-  // #define LED_OFF HIGH
+  // #define LED_ON LOW     // weirdly enough, the on/off states for the M5Stick boards are the opposite
+  // #define LED_OFF HIGH   // of every other board I've used.
 #endif
-
 
 // The Espressif people decided to use String instead of std::string in some versions of
 // their ESP32 libraries. Check the BLEAdvertisedDevice.h file to see if this is the case
@@ -80,7 +80,6 @@ int scanTime = 1;  //In seconds
 
 // Must use the "packed" attribute to make sure the compiler doesn't add any padding to deal with
 // word alignment.
-
 typedef struct {
   uint8_t deviceState;
   uint8_t errorCode;
@@ -113,6 +112,23 @@ typedef struct {
   byte byteKey[16];           // 16 bytes for encryption key - initialized by setup() from quoted strings
   char cachedDeviceName[32];  // 31 characters + \0 (filled in as we receive advertisements)
 } solarController;
+
+// Here I list the mac address, encryption key, and comment text (displayed only during initialization)
+// for one or more Victron SmartSolar controllers. The code will receive beacons from the conmfigured
+// controllers and will display the data from the one with the strongest signal. This is presumably
+// the one that's physically closest to our ESP32 device. Once a device has been chosen as
+// the one with the strongest signal it will remain selected unless it gets an even stronger signal from
+// another.
+//
+// The mac address and encryption key for each known controller is configured as a quoted character string
+// literal and then converted to an internal array of bytes during setup.
+//
+// The mac and encryption key for each controller is obtained from the VictronConnect app. See the extensive
+// comments on this in my bare-minimum Victron BLE Advertising example:
+//
+//   https://github.com/hoberman/Victron_BLE_Advertising_example
+//
+
 
 // extra braces around each "designated initializer" element needed by some compiler versions.
 solarController solarControllers[] = {
