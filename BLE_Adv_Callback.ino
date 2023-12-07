@@ -122,12 +122,14 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
           return;
         }
 
+        // Get the signal strength (RSSI) of the beacon.
+        int RSSI=advertisedDevice.getRSSI();
+
         // If we're showing our data on our integrated graphics hardware,
         // then show only the SmartSolar device with the strongest signal.
         if (usingGraphicsHardware) {
           // Get the beacon's RSSI (signal strength). If it's stronger than other beacons we've received,
           // then lock on to this SmartSolar and don't display beacons from others anymore.
-          int RSSI=advertisedDevice.getRSSI();
           if (selectedSolarControllerIndex==solarControllerIndex) {
             if (RSSI > bestRSSI) {
               bestRSSI=RSSI;
