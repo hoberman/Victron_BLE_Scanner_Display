@@ -16,6 +16,6 @@ I'm new to Github, so don't be surprised if you see wonky things going on here w
 
 I'm a hobbyist, not an experienced software developer, so be kind where I've made mistakes or done things in a weird way.
 
-Yes, I've included my Victron's encryption key in my source code. I understand that's a bad practice, but in this case I'm willing to accept the risk that you might drive by and be able to decode my SmartSolar data. Oh, the horror!
+Yes, I've included my Victrons' encryption keys in my source code. I understand that's a bad practice, but in this case I'm willing to accept the risk that you might drive by and be able to decode my SmartSolar data. Oh, the horror!
 
 Be aware that Espressif appears to be changing the types of some of the BLE Advertising methods we use from std::string to String. You'll need to check your build system's BLEAdvertisedDevice.h file and comment/uncomment the USE_String #define accordingly.
