@@ -37,12 +37,6 @@
   #include <M5StickCPlus.h>
 #endif
 
-#if !defined M5STICKC && !defined M5STICKCPLUS
-  bool usingGraphicsHardware=true;
-#else
-  bool usingGraphicsHardware=false;
-#endif
-
 #if defined M5STICKC || defined M5STICKCPLUS
   M5Display display;
 
@@ -61,6 +55,8 @@
   // #define LED_PIN 10
   // #define LED_ON LOW     // weirdly enough, the on/off states for the M5Stick boards are the opposite
   // #define LED_OFF HIGH   // of every other board I've used.
+
+  #define BUTTON_1 37
 
 #endif
 
@@ -146,7 +142,10 @@ int  knownSolarControllerCount = sizeof(solarControllers) / sizeof(solarControll
 int bestRSSI = -200;
 int selectedSolarControllerIndex = -1;
 
-time_t lastLEDBlinkTime = 0;
+time_t lastLEDBlinkTime=0;
+time_t lastTick=0;
+int displayRotation=3;
+bool packetReceived=false;
 
 char chargeStateNames[][6] = {
   "  off",

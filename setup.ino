@@ -15,11 +15,15 @@ void setup() {
     digitalWrite(LED_PIN, LED_OFF);
   #endif
 
+  #if defined BUTTON_1
+    pinMode(BUTTON_1, INPUT_PULLUP);
+  #endif
+
   #if defined M5STICKC || defined M5STICKCPLUS
     M5.begin();
 
     display.init();
-    display.setRotation(3);
+    display.setRotation(displayRotation);
     display.fillScreen(COLOR_BACKGROUND);
 
     display.setTextColor(COLOR_TEXT, COLOR_BACKGROUND);
@@ -100,12 +104,4 @@ void setup() {
   #endif
 
   delay(2000);
-
-  Serial.println("BLE listening...");
-  #if defined M5STICKC || defined M5STICKCPLUS
-    display.fillScreen(COLOR_BACKGROUND);
-    display.setCursor(0, 0);
-
-    display.printf("BLE listening\n");
-  #endif
 }

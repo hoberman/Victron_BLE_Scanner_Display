@@ -127,7 +127,10 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
 
         // If we're showing our data on our integrated graphics hardware,
         // then show only the SmartSolar device with the strongest signal.
-        if (usingGraphicsHardware) {
+        // I debated on whether to do this with "#if defined..." for conditional compilation
+        // or I should do this with a boolean "using graphics hardware" variable and a regular
+        // "if". I decided on #if, but I might change my mind later.
+        #if defined M5STICKC || defined M5STICKCPLUS
           // Get the beacon's RSSI (signal strength). If it's stronger than other beacons we've received,
           // then lock on to this SmartSolar and don't display beacons from others anymore.
           if (selectedSolarControllerIndex==solarControllerIndex) {
@@ -145,11 +148,11 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
               return;
             }
           }
-        }
+        #endif
 
         // Now that the packet received has met all the criteria for being displayed,
         // let's decrypt and decode the manufacturer data.
-        
+
         byte inputData[16];
         byte outputData[16]={0};
         victronPanelData * victronData = (victronPanelData *) outputData;
@@ -255,6 +258,8 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
           display.printf("%s",chargeStateName);
           display.setTextColor(COLOR_TEXT, COLOR_BACKGROUND);
         #endif
+
+        packetReceived=true;
       }
     }
 };

@@ -17,4 +17,38 @@ void loop() {
     }
   #endif
   
+  // for now I'll flip the display orientation using BUTTON_1. I really ought
+  // to code this to use the accelerometer to sense the board's position...
+  #if defined BUTTON_1
+    if (digitalRead(BUTTON_1)==LOW) {
+      while (digitalRead(BUTTON_1)==LOW) {
+        delay(100);
+      }
+
+      if (displayRotation==3) {
+        displayRotation=1;
+      } else {
+        displayRotation=3;
+      }
+      Serial.printf("Setting display rotation to %d\n",displayRotation);
+      display.setRotation(displayRotation);
+      lastTick=0;
+      packetReceived=false;
+    }
+  #endif
+
+  time_t timeNow=time(nullptr);
+  if (!packetReceived && timeNow!=lastTick) {
+    lastTick=timeNow;
+    Serial.println("BLE listening...");
+    #if defined M5STICKC || defined M5STICKCPLUS
+      display.fillScreen(COLOR_BACKGROUND);
+      display.setCursor(0, 0);
+
+      display.printf("   Waiting   \n");
+      display.printf("     for     \n");
+      display.printf("   Victron   \n");
+      display.printf("  SmartSolar \n");
+    #endif
+  }
 }
