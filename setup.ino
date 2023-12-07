@@ -9,6 +9,7 @@ void setup() {
   Serial.printf("Source file: %s\n",__FILE__);
   Serial.printf(" Build time: %s\n",__TIMESTAMP__);
   Serial.println();
+  delay(1000);
 
   #if defined LED_PIN
     pinMode(LED_PIN,OUTPUT);
