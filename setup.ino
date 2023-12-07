@@ -95,7 +95,7 @@ void setup() {
 
   delay(2000);
 
-  Serial.println("Done with setup()\n");
+  Serial.println("Done with setup()");
 
   #if defined M5STICKC || defined M5STICKCPLUS
     display.fillScreen(COLOR_BACKGROUND);

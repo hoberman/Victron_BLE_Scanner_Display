@@ -193,7 +193,8 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
         float batteryVoltage=float(victronData->batteryVoltage)*0.01;
         float batteryCurrent=float(victronData->batteryCurrent)*0.1;
         float todayYield=float(victronData->todayYield)*0.01*1000;
-        float inputPower=float(victronData->inputPower)*0.01;
+        uint16_t inputPower=victronData->inputPower;  // this is in watts; no conversion needed
+
 
         // Getting the output current takes some magic.
         int integerOutputCurrent=((victronData->outputCurrentHi & 0x01)<<9) | victronData->outputCurrentLo;
@@ -222,7 +223,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
           }
         #endif
 
-        Serial.printf("%-31s  Battery: %6.2f Volts %6.2f Amps  Solar: %6.2f Watts  Yield: %4.0f Wh  Load: %5.1f Amps  Charger: %-13s Err: %2d RSSI: %d\n",
+        Serial.printf("%-31s  Battery: %6.2f Volts %6.2f Amps  Solar: %6d Watts  Yield: %4.0f Wh  Load: %5.1f Amps  Charger: %-13s Err: %2d RSSI: %d\n",
           solarControllers[solarControllerIndex].cachedDeviceName,
           batteryVoltage, batteryCurrent,
           inputPower, todayYield,
@@ -249,7 +250,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
           display.printf("%6.1fA\n",batteryCurrent);
           display.setTextColor(COLOR_TEXT, COLOR_BACKGROUND);
 
-          display.printf("%5.2fW %4.0fWh\n",inputPower,todayYield);
+          display.printf("%5dW %4.0fWh\n",inputPower,todayYield);
           display.printf("Load: %6.1fA\n",outputCurrent);
 
           display.printf("Charge: ");
