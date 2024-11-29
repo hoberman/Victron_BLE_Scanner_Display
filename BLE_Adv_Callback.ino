@@ -9,17 +9,35 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
       // See if we have manufacturer data and then look to see if it's coming from a Victron device.
       if (advertisedDevice.haveManufacturerData() == true) {
 
+        // Note: This comment (and maybe some code?) needs to be adjusted so it's not so
+        // specific to String-vs-std:string. I'll leave it as-is for now so you at least
+        // understand why I have an extra byte added to the manCharBuf array.
+        //
         // Here's the thing: BLE specs say our manufacturer data can be a max of 31 bytes.
-        //
-        // Note: these comments need to be reworked because of the way different versions of
-        // the ESP32 libraries use String-vs-std::string.
-        //
         // But: The library code puts this data into a String, which we will then copy to
         // a character (i.e., byte) buffer using String.toCharArray(). Assuming we have the
         // full 31 bytes of manufacturer data allowed by the BLE spec, we'll need to size our
         // buffer with an extra byte for a null terminator. Our toCharArray() call will need
         // to specify *32* bytes so it will copy 31 bytes of data with a null terminator
         // at the end.
+        //
+        // Having said all that, I need to backtrack a bit. We're NOT going to be using String.toCharArray()
+        // because it turns out that under some circumstances the manufacturer data may contain bytes
+        // with a value of zero (0x00). A zero byte causes String.toCharArray() (as well as String.getBytes())
+        // to terminate early and/or do other bizarre things that have the effect of corrupting the data.
+        //
+        // This was pointed out by surfermarty in Issue #6, and I verified the odd behavior by constructing a
+        // String with embeded zero-valued bytes and trying various ways of copying the data.
+        // As suggested by surfermarty, we can call String.c_str() to give us a pointer to the actual byte
+        // data buried in the String object and then use memcpy() to copy the data to our own buffer that we can
+        // access as intended.
+        //
+        // That being the case, we really don't need the +1 nonsense any more, other than it's there (for now)
+        // to accomodate users who might be still on an older version of the ESP32 library code. At some point
+        // I'll just remove the legacy compatibility and pare these comments down to just a discussion about using
+        // String.c_str()+memcpy() vs the more obvious-but-broken String.toCharArray().
+        //
+        
         uint8_t manCharBuf[manDataSizeMax+1];
 
         #ifdef USE_String
@@ -37,9 +55,11 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
         // Now copy the data from the String to a byte array. Must have the +1 so we
         // don't lose the last character to the null terminator.
         #ifdef USE_String
-          manData.toCharArray((char *)manCharBuf,manDataSize+1);
+          //manData.toCharArray((char *)manCharBuf,manDataSize+1);
+          memcpy(manCharBuf,manData.c_str(),manDataSize);
         #else
-          manData.copy((char *)manCharBuf, manDataSize + 1);
+          //manData.copy((char *)manCharBuf, manDataSize + 1);
+          manData.copy((char *)manCharBuf, manDataSize);
         #endif
         
         // Now let's use a struct to get to the data more cleanly.
