@@ -1,5 +1,9 @@
 # Victron_BLE_Scanner_Display
  
+Code to display data from a Victron SmartSolar device. This is written
+for the M5StickCPlus (preferred) or M5Stack M5StickC (similar, but older with
+a smaller display).
+
 This software builds on the stripped-down Victron BLE Advertising example found at:
 
    https://github.com/hoberman/Victron_BLE_Advertising_example
