@@ -254,7 +254,7 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks {
           display.fillScreen(COLOR_BACKGROUND);
           display.setCursor(0, 0);
 
-          // We don't want to overflow our screen's display width (in this cast 13 characters) so
+          // We don't want to overflow our screen's display width (in this case 13 characters) so
           // we'll limit the size of what we display. Sorry about that.
           char screenDeviceName[14]; // 13 characters plus /0
           strncpy(screenDeviceName,solarControllers[solarControllerIndex].cachedDeviceName,13);
