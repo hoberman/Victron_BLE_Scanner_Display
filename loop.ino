@@ -1,6 +1,6 @@
 void loop() {
 
-  BLEScanResults foundDevices = pBLEScan->start(scanTime, false);
+  BLEScanResults * foundDevices = pBLEScan->start(scanTime, false);
 
   pBLEScan->clearResults(); // delete results fromBLEScan buffer to release memory
 

@@ -72,7 +72,7 @@
 // The Espressif people decided to use String instead of std::string in some versions of
 // their ESP32 libraries. Check the BLEAdvertisedDevice.h file to see if this is the case
 // for getManufacturerData(); if so, then uncomment this line. Ugh.
-//#define USE_String
+#define USE_String
 
 BLEScan *pBLEScan;
 
@@ -141,12 +141,12 @@ typedef struct {
 
 
 // extra braces around each "designated initializer" element needed by some compiler versions.
-solarController solarControllers[] = {
+static solarController solarControllers[3] = {
   { { .charMacAddr = "f4116784732a" }, { .charKey = "dc73cb155351cf950f9f3a958b5cd96f" }, { .comment = "Spare" } },
   { { .charMacAddr = "f944913298e8" }, { .charKey = "40ef2093aa678238147091c7657daa54" }, { .comment = "Gazebo" } },
   { { .charMacAddr = "cc5b284e8ae6" }, { .charKey = "2b6d51d4a74c3b83749303d87fa17bd9" }, { .comment = "Shack" } }
 };
-int  knownSolarControllerCount = sizeof(solarControllers) / sizeof(solarControllers[0]);
+int knownSolarControllerCount = sizeof(solarControllers) / sizeof(solarControllers[0]);
 
 int bestRSSI = -200;
 int selectedSolarControllerIndex = -1;
