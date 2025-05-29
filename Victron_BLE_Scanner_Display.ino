@@ -34,8 +34,8 @@
 
 // Uncomment only one.
 ///////////////////////////////////
-#define M5STICKC
-//#define M5STICKCPLUS
+//#define M5STICKC
+#define M5STICKCPLUS
 ///////////////////////////////////
 
 #if defined M5STICKC
@@ -114,14 +114,14 @@ typedef struct {
 } __attribute__((packed)) victronManufacturerData;
 
 
-typedef struct {
+struct solarController {
   char charMacAddr[13];       // 12 character MAC + \0 (initialized as quoted strings below for convenience)
   char charKey[33];           // 32 character keys + \0 (initialized as quoted strings below for convenience)
   char comment[16];           // 16 character comment (name) for printing during setup()
   byte byteMacAddr[6];        // 6 bytes for MAC - initialized by setup() from quoted strings
   byte byteKey[16];           // 16 bytes for encryption key - initialized by setup() from quoted strings
   char cachedDeviceName[32];  // 31 characters + \0 (filled in as we receive advertisements)
-} solarController;
+};
 
 // Here I list the mac address, encryption key, and comment text (displayed only during initialization)
 // for one or more Victron SmartSolar controllers. The code will receive beacons from the conmfigured
@@ -140,12 +140,23 @@ typedef struct {
 //
 
 
+
+struct solarController solarControllers[3] = {
+  { .charMacAddr = "f4116784732a", .charKey = "dc73cb155351cf950f9f3a958b5cd96f", .comment = "Spare" },
+  { .charMacAddr = "f944913298e8", .charKey = "40ef2093aa678238147091c7657daa54", .comment = "Gazebo" },
+  { .charMacAddr = "cc5b284e8ae6", .charKey = "2b6d51d4a74c3b83749303d87fa17bd9", .comment = "Shack" }
+};
+
+
 // extra braces around each "designated initializer" element needed by some compiler versions.
+/*
 static solarController solarControllers[3] = {
   { { .charMacAddr = "f4116784732a" }, { .charKey = "dc73cb155351cf950f9f3a958b5cd96f" }, { .comment = "Spare" } },
   { { .charMacAddr = "f944913298e8" }, { .charKey = "40ef2093aa678238147091c7657daa54" }, { .comment = "Gazebo" } },
   { { .charMacAddr = "cc5b284e8ae6" }, { .charKey = "2b6d51d4a74c3b83749303d87fa17bd9" }, { .comment = "Shack" } }
 };
+*/
+
 int knownSolarControllerCount = sizeof(solarControllers) / sizeof(solarControllers[0]);
 
 int bestRSSI = -200;
